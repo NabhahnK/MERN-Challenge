@@ -62,13 +62,10 @@ const SearchBooks = () => {
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
 
+    setFormState({
+      ...formState,
+      [bookId]: bookToSave,})
 
-    const handleChange = (event) => {
-      setFormState({
-        ...formState,
-        [bookId]: bookToSave,
-      });
-    };
     
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
