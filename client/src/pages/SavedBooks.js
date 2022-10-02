@@ -11,10 +11,11 @@ import { REMOVE_BOOK } from '../utils/mutations';
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
+  const [mutateFunction, { data, loading, error }] = useMutation(REMOVE_BOOK);
 
   const { username: userParam } = useParams();
 
-  setUserData(useQuery(userParam ? QUERY_USER : GET_ME, {
+  setUserData(useQuery( GET_ME, {
     variables: { username: userParam },
   }));
 
@@ -29,25 +30,14 @@ const SavedBooks = () => {
     try {
       // const response = await deleteBook(bookId, token);
 
-      const [mutateFunction, { data, loading, error }] = useMutation(REMOVE_BOOK);
+      
       mutateFunction({bookId: bookId});
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const updatedUser = await response.json();
-      setUserData(updatedUser);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
       console.error(err);
     }
   };
-
-  // if data isn't here yet, say so
-  if (!userDataLength) {
-    return <h2>LOADING...</h2>;
-  }
 
   return (
     <>

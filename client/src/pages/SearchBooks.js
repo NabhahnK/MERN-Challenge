@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'react-bootstrap';
 
 import { SAVE_BOOK } from '../utils/mutations';
+import { useMutation } from '@apollo/client';
 
 import Auth from '../utils/auth';
 import { searchGoogleBooks } from '../utils/API';
@@ -54,12 +55,13 @@ const SearchBooks = () => {
     }
   };
 
+  const [formState, setFormState] = useState({ bookId: '' });
+  const [savebook, { error, data }] = useMutation(SAVE_BOOK);
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
-    const [formState, setFormState] = useState({ bookId: '' });
-    const [savebook, { error, data }] = useMutation(SAVE_BOOK);
+
 
     const handleChange = (event) => {
       setFormState({
@@ -76,11 +78,7 @@ const SearchBooks = () => {
     }
 
     try {
-      const { data } = await saveBook({variables: {...formState}});
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      const { data } = await savebook({variables: {...formState}});
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
